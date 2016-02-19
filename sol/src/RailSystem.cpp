@@ -4,13 +4,10 @@
 #include "RailSystem.h"
 
 void RailSystem::reset(void) {
+
     // TODO: reset the data objects of the 
     // City objects' contained in cities
-	for (map<string, City*>::iterator cur = cities.begin(); cur != cities.end(); cur++) {
-		(*cur).second->from_city = "";
-		(*cur).second->visited = false;
-		(*cur).second->total_fee = (*cur).second->total_distance = 0;
-	}
+    
 }
 
 RailSystem::RailSystem(string const &filename) {
@@ -34,25 +31,7 @@ void RailSystem::load_services(string const &filename) {
 			// TODO: Add entries in the cities container and
 			// and services in the rail system for the new 
             // cities we read in.	
-			City *f, *t;
-			// initialize from city
-			if (cities[from] == NULL) {
-				cities[from] = new City(from);
-			}
-			f = cities[from];
-			// initialize to city
-			if (cities[to] == NULL) {
-				cities[to] = new City(to);
-			}
-			t = cities[to];
-			// initialize services
-			if (outgoing_services.find(from) == outgoing_services.end()) {
-				list<Service*> list;
-				outgoing_services[from] = list;
-				outgoing_services[from].push_back(new Service(to, fee, distance));
-			} else {
-				outgoing_services.find(from)->second.push_back(new Service(to, fee, distance));
-			}
+
 		}
 	}
 
@@ -64,19 +43,6 @@ RailSystem::~RailSystem(void) {
     // TODO: release all the City* and Service*
     // from cities and outgoing_services
 
-	// cleaning of outgoing_services
-	list<Service*>::iterator cur2;
-	for (map<string, list<Service*>>::iterator cur = outgoing_services.begin(); cur != outgoing_services.end(); cur++) {
-		cur2 = (*cur).second.begin(); 
-		while(cur2 != (*cur).second.end()) {
-			delete *cur2;
-			cur2++;
-		}
-	}
-	// cleaning of cities
-	for (map<string, City*>::iterator cur = cities.begin(); cur != cities.end(); cur++) {
-		delete (*cur).second;
-	}
 }
 
 void RailSystem::output_cheapest_route(const string& from,
@@ -106,43 +72,7 @@ pair<int, int> RailSystem::calc_route(string from, string to) {
 
     // TODO: Implement Dijkstra's shortest path algorithm to
     // find the cheapest route between the cities
-    // clear previous calculations
-	reset();
-
-	// start initialize all routes to maximum values
-	for (map<string, City*>::iterator cur = cities.begin(); cur != cities.end(); cur++) {
-		(*cur).second->total_fee = INT_MAX;
-		candidates.push((*cur).second);
-	}
-	// initialize start and end cities
-	City *start, *end;
-	start = cities[from];
-	end = cities[to];
-	// set start data
-	start->from_city = start->name;
-	start->total_fee = 0;
-	start->visited = true;
-	end->total_fee = INT_MAX;
-	//Dijkstra
-	for (std::make_heap(const_cast<City**> (&candidates.top()), const_cast<City**> (&candidates.top()) + candidates.size(), Cheapest());
-			candidates.size() && candidates.top()->visited && candidates.top() != end; 
-				std::make_heap(const_cast<City**> (&candidates.top()), const_cast<City**> (&candidates.top()) + candidates.size(), Cheapest())) {
-		
-		start = candidates.top();
-		candidates.pop();
-
-		list<Service*>::iterator cur = outgoing_services[start->name].begin(); 
-		while(cur != outgoing_services[start->name].end()) {
-
-			if (cities[(*cur)->destination]->total_fee > (start->total_fee + (*cur)->fee)) {
-				cities[(*cur)->destination]->visited = true;
-				cities[(*cur)->destination]->from_city = start->name;
-				cities[(*cur)->destination]->total_fee = start->total_fee + (*cur)->fee;
-				cities[(*cur)->destination]->total_distance = start->total_distance + (*cur)->distance;
-			}
-			cur++;
-		}
-	}
+    
 
     // Return the total fee and total distance.
     // Return (INT_MAX, INT_MAX) if not path is found.
@@ -158,11 +88,8 @@ string RailSystem::recover_route(const string& city) {
 	
     // TODO: walk backwards through the cities
     // container to recover the route we found
-	if (city == cities[city]->from_city) {
-		return cities[city]->from_city;
-	} else {
-		return recover_route(cities[city]->from_city) + " to " + city;
-	}
+
+    return "";
 }
 
 

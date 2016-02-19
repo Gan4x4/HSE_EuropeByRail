@@ -18,8 +18,7 @@ public:
 
     City() : name(""), visited(false), total_fee(0), total_distance(0), from_city("") {}
 
-    City(string const &s): name(s), visited(false),
-    total_fee(0), total_distance(0), from_city("") {}}
+    City(string const &s): name(s), visited(false), total_fee(0), total_distance(0), from_city("") {}}
 ;
 
 #endif

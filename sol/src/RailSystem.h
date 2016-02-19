@@ -14,20 +14,22 @@
 
 using namespace std;
 
+
 class Cheapest {
 
 public:
     Cheapest() {}
-    //bool operator()(City* city1, City* city2) {   // NEW!
-    bool operator()(const City city1, const City city2) {
 
+    bool operator()(City* city1, City* city2) {
+        return city1->total_fee > city2->total_fee;
+    }
+    bool operator()(const City city1, const City city2) {
         return city1.total_fee < city2.total_fee;
     }
 
 };
 
-
-// For test only  // NEW!
+// For test only 
 struct Route{
 	string from;
 	string to;
@@ -42,6 +44,8 @@ struct Route{
             return false;
         };
 };
+
+
 
 class RailSystem {
 
@@ -59,28 +63,10 @@ public:
     RailSystem(const string& filename);
     ~RailSystem(void);
 
-    bool is_valid_city(const string& name);
     void output_cheapest_route(const string& from, const string& to, ostream& out);
-    
-    // For testing only   // NEW!
-    Route getCheapestRoute(const string& from, const string& to){
-        assert(is_valid_city(from));
-	assert(is_valid_city(to));
-        reset();
-        pair<int, int> p =  calc_route(from,to);
-        return Route(from,to,p.first,p.second);
-    }
-/*    
-	bool check(TestWay w){
-		assert(is_valid_city(w.from));
-		assert(is_valid_city(w.to));
-		reset();
-			pair<int, int> p =  calc_route(w.from, w.to);
-			if (w.fee == p.first && w.distance == p.second	) return true;
-		
-		return false;
-	}
-*/
+    bool is_valid_city(const string& name);
+    // For test only   
+    Route getCheapestRoute(const string& from, const string& to);
 };
 
 
