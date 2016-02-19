@@ -66,10 +66,8 @@ RailSystem::~RailSystem(void) {
 
 	// cleaning of outgoing_services
 	list<Service*>::iterator cur2;
-	//for (map<string, list<Service*>>::iterator cur = outgoing_services.begin(); cur != outgoing_services.end(); cur++) {
-for (map<string, list<Service*>>::iterator cur = outgoing_services.begin(); cur != outgoing_services.end(); cur++) {
-		
-	cur2 = (*cur).second.begin(); 
+	for (map<string, list<Service*>>::iterator cur = outgoing_services.begin(); cur != outgoing_services.end(); cur++) {
+		cur2 = (*cur).second.begin(); 
 		while(cur2 != (*cur).second.end()) {
 			delete *cur2;
 			cur2++;
@@ -167,7 +165,7 @@ string RailSystem::recover_route(const string& city) {
 	}
 }
 
-/*
+
 Route RailSystem::getCheapestRoute(const string& from, const string& to){
     assert(is_valid_city(from));
     assert(is_valid_city(to));
@@ -175,4 +173,3 @@ Route RailSystem::getCheapestRoute(const string& from, const string& to){
     pair<int, int> p =  calc_route(from,to);
     return Route(from,to,p.first,p.second);
 }
- */
