@@ -8,6 +8,7 @@
 #include <queue>
 #include <vector>
 #include <assert.h>
+#include <climits>
 
 #include "Service.h"
 #include "City.h"
