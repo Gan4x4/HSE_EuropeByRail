@@ -8,7 +8,8 @@
 #include <queue>
 #include <vector>
 #include <assert.h>
-#include <climits>
+#include <climits>      // INT_MAX
+#include <algorithm>    // std::find
 
 #include "Service.h"
 #include "City.h"

@@ -32,8 +32,13 @@ void RailSystem::load_services(string const &filename) {
 		inf >> from >> to >> fee >> distance;
 
 		if ( inf.good() ) {
-            if (cities.find(from) == cities.end()){
-                cities[from] = new City();
+            if (! is_valid_city(from)){
+                cities[from] = new City(from);
+            }
+            
+            if ( ! is_valid_city(to))
+            {
+                cities[to] = new City(to);
             }
            outgoing_services[from].push_back(new Service(to,fee,distance)); 
 		}
@@ -82,39 +87,52 @@ bool RailSystem::is_valid_city(const string& name) {
 }
 
 pair<int, int> RailSystem::calc_route(string from, string to) {
-    // You can use another container
-	priority_queue<City*, vector<City*>, Cheapest> candidates;
-
     
+    // Validate city's names
+    if (! is_valid_city(from) || ! is_valid_city(to))
+    {
+        throw invalid_argument("City name are bad");
+    }
+        
+    // You can use another container
+    vector<City*> data;
+	priority_queue<City*, vector<City*>, Cheapest> candidates(data.begin(),data.end());
+    
+    // Dijkstra's shortest path algorithm 
     City* current = cities[from]; 
     current->total_distance = 0;
     current->total_fee = 0;
-    //current->visited = true;
     candidates.push(current);
     do
     {
         current = candidates.top();
-        for (Service* service: outgoing_services[current->name]){
-            if (! cities[service->destination]->visited )
+        for (Service* service: outgoing_services[current->name])
+        {
+            City *city =  cities[service->destination];
+            int newFee = current->total_fee + service->fee;
+            if (! city->visited  && newFee < city->total_fee )
             {
-                City * city =  cities[service->destination];
+                // Update fee and distance
                 city->total_distance =  current->total_distance + service->distance;
-                city->total_fee =  current->total_distance + service->fee;
-                candidates.push(city);
-                // rebild
+                city->total_fee =  newFee;
+                city->from_city =  current->name;
+                if (std::find(data.begin(),data.end(),city) == data.end())
+                {
+                    // Put new element
+                    candidates.push(city);
+                }
+                else
+                {
+                    // If city already in queue we need to rebuild heap,
+                    // because place on this element can changed
+                    make_heap(data.begin(),data.end(),Cheapest());     
+                }
             }
         }
-        
-        current->visited = true;
+        // all path from this city are checked
+        current->visited = true; 
         candidates.pop();
     }  while(candidates.size() > 0);
-    
-    // TODO: Implement Dijkstra's shortest path algorithm to
-    // find the cheapest route between the cities
-    
-    
-    
-    
 
     // Return the total fee and total distance.
     // Return (INT_MAX, INT_MAX) if not path is found.
@@ -130,8 +148,15 @@ string RailSystem::recover_route(const string& city) {
 	
     // TODO: walk backwards through the cities
     // container to recover the route we found
-
-    return "";
+    City* current = cities[city];
+    string output;
+    while (current->total_fee)
+    {
+        output =  " to " +current->name + output ; 
+        current = cities[current->from_city];
+    }
+    output = current->name + output; 
+    return output;
 }
 
 
