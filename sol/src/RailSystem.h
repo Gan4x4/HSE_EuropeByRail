@@ -21,13 +21,13 @@ class Cheapest {
 public:
     Cheapest() {}
 
-    bool operator()(City* city1, City* city2) {
+    bool operator()(const City* city1,const City* city2) {
         return city1->total_fee > city2->total_fee;
     }
-    bool operator()(const City city1, const City city2) {
-        return city1.total_fee < city2.total_fee;
-    }
 
+    bool operator()(const City &city1, const City &city2) {
+        return city1.total_fee > city2.total_fee;
+    }
 };
 
 // For test only 
